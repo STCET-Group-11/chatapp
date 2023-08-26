@@ -25,7 +25,7 @@ function ChatInterface() {
   };
 
   return (
-    <div>
+    <div className="chat-interface">
       <div className="message-container">
         {messages.map((message, index) => (
           <div key={index} className="message">
