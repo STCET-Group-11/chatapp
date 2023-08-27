@@ -38,16 +38,16 @@ const io = socketIo(server, {
   cors: corsOptions,
 });
 
-const secretKey = 'qwerty';
+// const secretKey = 'qwerty';
 
-io.on('connection', (socket) => {
-  console.log('A user connected');
+// io.on('connection', (socket) => {
+//   console.log('A user connected');
 
-  socket.on('message', (encryptedMessage) => {
-    console.log('Received encrypted message:', encryptedMessage);
-    io.emit('message', encryptedMessage);
-  });
-});
+//   socket.on('message', (encryptedMessage) => {
+//     console.log('Received encrypted message:', encryptedMessage);
+//     io.emit('message', encryptedMessage);
+//   });
+// });
 
 
 

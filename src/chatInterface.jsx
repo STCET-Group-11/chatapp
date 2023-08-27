@@ -14,7 +14,7 @@ function ChatInterface() {
     socket.on('message', (encryptedMessage) => {
       const decryptedBytes = crypto.AES.decrypt(encryptedMessage, secretKey);
       const decryptedMessage = decryptedBytes.toString(crypto.enc.Utf8);
-      console.log('Decrypted message 1:', decryptedMessage);
+      console.log('Decrypted message :', decryptedMessage);
       setMessages((prevMessages) => [...prevMessages, decryptedMessage]);
     });
   }, []);
@@ -26,6 +26,7 @@ function ChatInterface() {
   const sendMessage = () => {
     if (inputMessage.trim() !== '') {
       const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
+      console.log('Encrypted message :', encryptedMessage);
       socket.emit('message', encryptedMessage);
       setInputMessage('');
     }
