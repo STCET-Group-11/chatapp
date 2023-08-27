@@ -44,12 +44,22 @@ io.on('connection', (socket) => {
   console.log('A user connected');
 
   socket.on('message', (encryptedMessage) => {
+    console.log('Received encrypted message:', encryptedMessage);
+
     const bytes = crypto.AES.decrypt(encryptedMessage.toString(), secretKey);
+    console.log('Decryption bytes:', bytes);
+
     const decryptedMessage = bytes.toString(crypto.enc.Utf8);
+    console.log('Decrypted message:', decryptedMessage);
 
     io.emit('message', decryptedMessage);
   });
 });
+
+
+
+
+
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
