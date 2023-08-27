@@ -19,9 +19,6 @@ function ChatInterface() {
     });
   }, []);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const sendMessage = () => {
     if (inputMessage.trim() !== '') {
@@ -30,10 +27,6 @@ function ChatInterface() {
       socket.emit('message', encryptedMessage);
       setInputMessage('');
     }
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
