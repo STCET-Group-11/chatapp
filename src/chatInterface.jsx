@@ -14,7 +14,7 @@ function ChatInterface() {
     socket.on('message', (encryptedMessage) => {
       const decryptedBytes = crypto.AES.decrypt(encryptedMessage, secretKey);
       const decryptedMessage = decryptedBytes.toString(crypto.enc.Utf8);
-      console.log('Decrypted message:', decryptedMessage);
+      console.log('Decrypted message 1:', decryptedMessage);
       setMessages((prevMessages) => [...prevMessages, decryptedMessage]);
     });
   }, []);
