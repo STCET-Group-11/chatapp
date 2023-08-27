@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-const crypto = require('crypto-js');
+const bodyParser = require('body-parser'); // Add bodyParser for parsing POST requests
+const Message = require('./models/Message.cjs'); // Assuming you have a Message model defined
 
 const app = express();
 const server = http.createServer(app);
@@ -16,6 +17,7 @@ const corsOptions = {
   credentials: true,
 };
 app.use(cors(corsOptions));
+app.use(bodyParser.json()); // Use bodyParser to parse JSON
 
 const connectionString = 'mongodb+srv://grp11:dbgrp11@cluster0.whralck.mongodb.net/?retryWrites=true&w=majority';
 
@@ -38,21 +40,18 @@ const io = socketIo(server, {
   cors: corsOptions,
 });
 
-// const secretKey = 'qwerty';
+io.on('connection', (socket) => {
+  console.log('A user connected');
 
-// io.on('connection', (socket) => {
-//   console.log('A user connected');
-
-//   socket.on('message', (encryptedMessage) => {
-//     console.log('Received encrypted message:', encryptedMessage);
-//     io.emit('message', encryptedMessage);
-//   });
-// });
-
-
-
-
-
+  socket.on('message', async (message) => {
+    try {
+      const savedMessage = await Message.create({ content: message }); // Save the message to the database
+      io.emit('message', savedMessage.content); // Broadcast the message to all connected clients
+    } catch (error) {
+      console.error('Error saving message:', error);
+    }
+  });
+});
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

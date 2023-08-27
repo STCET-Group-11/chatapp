@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import crypto from 'crypto-js';
-
-const socket = io('http://localhost:3001/');
+const socket = io('http://localhost:3001');
 const secretKey = 'qwerty';
-
+//const Message = require('./models/Message.cjs'); // Assuming you have a Message model defined
 function ChatInterface() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef(null);
-
+  
   useEffect(() => {
     socket.on('message', (encryptedMessage) => {
       const decryptedBytes = crypto.AES.decrypt(encryptedMessage, secretKey);
@@ -28,6 +27,11 @@ function ChatInterface() {
       setInputMessage('');
     }
   };
+
+
+
+
+
 
   return (
     <div className="chat-interface">
