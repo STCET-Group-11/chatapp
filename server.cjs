@@ -1,9 +1,9 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-//const crypto = require('crypto'); // Import the crypto module
-const crypto = require('crypto-js'); // Import the crypto-js library
+const crypto = require('crypto-js');
 
 const app = express();
 const server = http.createServer(app);
@@ -17,21 +17,36 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-const io = socketIo(server, {
-  cors: corsOptions, // Use corsOptions for Socket.IO CORS configuration
+const connectionString = 'mongodb+srv://grp11:dbgrp11@cluster0.whralck.mongodb.net/?retryWrites=true&w=majority';
+
+mongoose.connect(connectionString, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
-const secretKey = 'qwerty'; // Replace with your secret key
+const db = mongoose.connection;
+
+db.once('open', () => {
+  console.log('Connected to MongoDB');
+});
+
+db.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
+
+const io = socketIo(server, {
+  cors: corsOptions,
+});
+
+const secretKey = 'qwerty';
 
 io.on('connection', (socket) => {
   console.log('A user connected');
 
   socket.on('message', (encryptedMessage) => {
-    // Decrypt the message
     const bytes = crypto.AES.decrypt(encryptedMessage.toString(), secretKey);
     const decryptedMessage = bytes.toString(crypto.enc.Utf8);
 
-    // Broadcast the decrypted message to all clients
     io.emit('message', decryptedMessage);
   });
 });

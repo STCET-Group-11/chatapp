@@ -1,21 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-import crypto from 'crypto-js'; // Import the crypto-js library
+import crypto from 'crypto-js';
 
-const socket = io('http://localhost:3001'); // Replace with your server URL
-const secretKey = 'qwerty'; // Replace with the same secret key used on the server
+const socket = io('http://localhost:3001/');
+const secretKey = 'qwerty';
 
 function ChatInterface() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     socket.on('message', (encryptedMessage) => {
-      const decryptedMessage = crypto.AES.decrypt(encryptedMessage, secretKey).toString(crypto.enc.Utf8);
+      const decryptedBytes = crypto.AES.decrypt(encryptedMessage, secretKey);
+      const decryptedMessage = decryptedBytes.toString(crypto.enc.Utf8);
       console.log('Decrypted message:', decryptedMessage);
       setMessages((prevMessages) => [...prevMessages, decryptedMessage]);
     });
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const sendMessage = () => {
     if (inputMessage.trim() !== '') {
@@ -23,6 +29,10 @@ function ChatInterface() {
       socket.emit('message', encryptedMessage);
       setInputMessage('');
     }
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -33,11 +43,12 @@ function ChatInterface() {
             {message}
           </div>
         ))}
+        <div ref={messagesEndRef}>&nbsp;</div>
       </div>
       <div className="input-container">
         <input
           type="text"
-          id="messageInput" // Add the id attribute here
+          id="messageInput"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
         />
