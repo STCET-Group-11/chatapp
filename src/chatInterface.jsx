@@ -40,6 +40,7 @@ function ChatInterface() {
       <div className="message-container">
         {messages.map((message, index) => (
           <div key={index} className="message">
+            <span>{index}: </span>
             {message}
           </div>
         ))}
