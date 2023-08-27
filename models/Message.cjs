@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
   content: String,
-  // Other fields you might need
+  sender: String,
+  timestamp: { type: Date, default: Date.now },
 });
 
 const Message = mongoose.model('Message', messageSchema);
 
-module.exports = Message;
+module.exports = Message; // Use CommonJS exports
+

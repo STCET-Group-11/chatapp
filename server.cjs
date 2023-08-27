@@ -1,23 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const http = require('http');
-const socketIo = require('socket.io');
 const cors = require('cors');
-const bodyParser = require('body-parser'); // Add bodyParser for parsing POST requests
+const bodyParser = require('body-parser');
+const crypto = require('crypto-js');
 const Message = require('./models/Message.cjs'); // Assuming you have a Message model defined
-
 const app = express();
-const server = http.createServer(app);
-
 const PORT = process.env.PORT || 3001;
+const secretKey = 'qwerty';
 
-const corsOptions = {
-  origin: 'http://localhost:5173',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-};
-app.use(cors(corsOptions));
-app.use(bodyParser.json()); // Use bodyParser to parse JSON
+app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
 const connectionString = 'mongodb+srv://grp11:dbgrp11@cluster0.whralck.mongodb.net/?retryWrites=true&w=majority';
 
@@ -36,23 +29,28 @@ db.on('error', (err) => {
   console.error('MongoDB connection error:', err);
 });
 
-const io = socketIo(server, {
-  cors: corsOptions,
+app.get('/messages', async (req, res) => {
+  try {
+    const messages = await Message.find();
+    res.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Error fetching messages' });
+  }
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected');
-
-  socket.on('message', async (message) => {
-    try {
-      const savedMessage = await Message.create({ content: message }); // Save the message to the database
-      io.emit('message', savedMessage.content); // Broadcast the message to all connected clients
-    } catch (error) {
-      console.error('Error saving message:', error);
-    }
-  });
+app.post('/messages', async (req, res) => {
+  const { content } = req.body;
+  const encryptedContent = crypto.AES.encrypt(content, secretKey).toString();
+  try {
+    const newMessage = await Message.create({ content: encryptedContent });
+    res.status(201).json(newMessage);
+  } catch (error) {
+    console.error('Error saving message:', error);
+    res.status(500).json({ error: 'Error saving message' });
+  }
 });
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

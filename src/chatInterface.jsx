@@ -1,37 +1,43 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
 import crypto from 'crypto-js';
-const socket = io('http://localhost:3001');
+import axios from 'axios'; // Import Axios
+
 const secretKey = 'qwerty';
-//const Message = require('./models/Message.cjs'); // Assuming you have a Message model defined
+
 function ChatInterface() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef(null);
-  
+
   useEffect(() => {
-    socket.on('message', (encryptedMessage) => {
-      const decryptedBytes = crypto.AES.decrypt(encryptedMessage, secretKey);
-      const decryptedMessage = decryptedBytes.toString(crypto.enc.Utf8);
-      console.log('Decrypted message :', decryptedMessage);
-      setMessages((prevMessages) => [...prevMessages, decryptedMessage]);
-    });
+    // Fetch messages from the server on component mount
+    fetchMessages();
   }, []);
 
-
-  const sendMessage = () => {
-    if (inputMessage.trim() !== '') {
-      const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
-      console.log('Encrypted message :', encryptedMessage);
-      socket.emit('message', encryptedMessage);
-      setInputMessage('');
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/messages');
+      const fetchedMessages = response.data.map(message => {
+        const decryptedBytes = crypto.AES.decrypt(message.content, secretKey);
+        return decryptedBytes.toString(crypto.enc.Utf8);
+      });
+      setMessages(fetchedMessages);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
     }
   };
 
-
-
-
-
+  const sendMessage = async () => {
+    if (inputMessage.trim() !== '') {
+      const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
+      try {
+        await axios.post('http://localhost:3001/messages', { content: encryptedMessage });
+        setInputMessage('');
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    }
+  };
 
   return (
     <div className="chat-interface">
