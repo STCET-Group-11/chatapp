@@ -20,7 +20,10 @@ function ChatInterface() {
         try {
           const bytes = crypto.AES.decrypt(message.content, secretKey);
           const decryptedMessage = bytes.toString(crypto.enc.Utf8);
+          console.log('Decrypted Message:', decryptedMessage);
           return decryptedMessage;
+
+
         } catch (error) {
           console.error('Error decrypting message:', error);
           return ''; // Return an empty string if decryption fails
@@ -34,8 +37,10 @@ function ChatInterface() {
 
   const sendMessage = async () => {
     if (inputMessage.trim() !== '') {
+      console.log('Input message:', inputMessage); // Add this line
       const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
       try {
+        console.log('Sending data:', { content: encryptedMessage }); // Add this line
         await axios.post('http://localhost:3001/messages', { content: encryptedMessage });
         setInputMessage('');
       } catch (error) {
