@@ -44,9 +44,15 @@ app.get('/messages', async (req, res) => {
 
 app.post('/messages', async (req, res) => {
   const { content } = req.body;
-  const encryptedContent = crypto.AES.encrypt(content, secretKey).toString();
+
+  //console.log('Content before encryption:', content);
+  //const encryptedContent = crypto.AES.encrypt(content, secretKey).toString();
+
+  const decryptedContent = crypto.AES.decrypt(content, secretKey).toString(crypto.enc.Utf8);
+  console.log('Decrypted Content:', decryptedContent);
+
   try {
-    const newMessage = await Message.create({ content: encryptedContent });
+    const newMessage = await Message.create({ content: decryptedContent });
     res.status(201).json(newMessage);
   } catch (error) {
     console.error('Error saving message:', error);
