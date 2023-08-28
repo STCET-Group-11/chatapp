@@ -5,7 +5,7 @@ import ChatInterface from './chatInterface'; // Correct the import path
 function App() {
   return (
     <div className="app-container">
-      <h1>Vey bad app</h1>
+      <h1>Chat App</h1>
       <ChatInterface />
     </div>
   );
