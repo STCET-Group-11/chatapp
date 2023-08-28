@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import crypto from 'crypto-js';
-import axios from 'axios'; // Import Axios
+import axios from 'axios';
 
 const secretKey = 'qwerty';
 
@@ -10,16 +10,21 @@ function ChatInterface() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // Fetch messages from the server on component mount
     fetchMessages();
   }, []);
 
   const fetchMessages = async () => {
     try {
       const response = await axios.get('http://localhost:3001/messages');
-      const fetchedMessages = response.data.map(message => {
-        const decryptedBytes = crypto.AES.decrypt(message.content, secretKey);
-        return decryptedBytes.toString(crypto.enc.Utf8);
+      const fetchedMessages = response.data.map((message) => {
+        try {
+          const bytes = crypto.AES.decrypt(message.content, secretKey);
+          const decryptedMessage = bytes.toString(crypto.enc.Utf8);
+          return decryptedMessage;
+        } catch (error) {
+          console.error('Error decrypting message:', error);
+          return ''; // Return an empty string if decryption fails
+        }
       });
       setMessages(fetchedMessages);
     } catch (error) {

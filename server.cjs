@@ -3,10 +3,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const crypto = require('crypto-js');
-const Message = require('./models/Message.cjs'); // Assuming you have a Message model defined
+const Message = require('./models/Message.cjs');
 const app = express();
 const PORT = process.env.PORT || 3001;
 const secretKey = 'qwerty';
+const http = require('http');
+const socketIo = require('socket.io');
+const server = http.createServer(app);
 
 app.use(express.json());
 app.use(cors());
