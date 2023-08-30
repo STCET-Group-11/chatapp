@@ -45,8 +45,8 @@ app.get('/messages', async (req, res) => {
 app.post('/messages', async (req, res) => {
   const { content } = req.body;
 
-  //console.log('Content before encryption:', content);
-  //const encryptedContent = crypto.AES.encrypt(content, secretKey).toString();
+  console.log('Content before encryption:', content);
+  const encryptedContent = crypto.AES.encrypt(content, secretKey).toString();
 
   const decryptedContent = crypto.AES.decrypt(content, secretKey).toString(crypto.enc.Utf8);
   console.log('Decrypted Content:', decryptedContent);

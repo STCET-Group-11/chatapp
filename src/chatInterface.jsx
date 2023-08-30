@@ -21,19 +21,21 @@ function ChatInterface() {
           const bytes = crypto.AES.decrypt(message.content, secretKey);
           const decryptedMessage = bytes.toString(crypto.enc.Utf8);
           console.log('Decrypted Message:', decryptedMessage);
-          return decryptedMessage;
-
-
+          if (decryptedMessage) {
+            return decryptedMessage;
+          }
+          return null;
         } catch (error) {
           console.error('Error decrypting message:', error);
-          return ''; // Return an empty string if decryption fails
+          return null;
         }
       });
-      setMessages(fetchedMessages);
+      setMessages(fetchedMessages.filter(Boolean)); // Remove null messages
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
   };
+  
 
   const sendMessage = async () => {
     if (inputMessage.trim() !== '') {
