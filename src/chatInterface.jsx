@@ -18,7 +18,9 @@ function ChatInterface() {
       const response = await axios.get('http://localhost:3001/messages');
       const fetchedMessages = response.data.map((message) => {
         try {
-          const bytes = crypto.AES.decrypt(message.content, secretKey);
+          const bytes1 = crypto.RabbitLegacy.decrypt(message.content, secretKey);
+          const decryptedMessage1 = bytes1.toString(crypto.enc.Utf8);
+          const bytes = crypto.AES.decrypt(decryptedMessage1, secretKey);
           const decryptedMessage = bytes.toString(crypto.enc.Utf8);
           console.log('Decrypted Message:', decryptedMessage);
           if (decryptedMessage) {
@@ -41,9 +43,10 @@ function ChatInterface() {
     if (inputMessage.trim() !== '') {
       console.log('Input message:', inputMessage); // Add this line
       const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
+      const encryptedMessage1 = crypto.RabbitLegacy.encrypt(encryptedMessage, secretKey).toString();
       try {
-        console.log('Sending data:', { content: encryptedMessage }); // Add this line
-        await axios.post('http://localhost:3001/messages', { content: encryptedMessage });
+        console.log('Sending data:', { content: encryptedMessage1 }); // Add this line
+        await axios.post('http://localhost:3001/messages', { content: encryptedMessage1 });
         setInputMessage('');
       } catch (error) {
         console.error('Error sending message:', error);
