@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import crypto from 'crypto-js';
 import axios from 'axios';
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import './App.css'
+import { Paper } from '@mui/material';
+import Container from '@mui/material/Container';
 
 const secretKey = 'qwerty';
 
@@ -52,27 +59,51 @@ function ChatInterface() {
   };
 
   return (
-    <div className="chat-interface">
-      <div className="message-container">
-        {messages.map((message, index) => (
-          <div key={index} className="message">
-            <span>{index}: </span>
-            {message}
-          </div>
-        ))}
-        <div ref={messagesEndRef}>&nbsp;</div>
-      </div>
-      <div className="input-container">
-        <input
-          type="text"
-          id="messageInput"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-        />
-        <button onClick={sendMessage}>Send</button>
+    <div className="prime">
+      <div className="chat-interface">
+        <div className="message-container">
+          <Container maxWidth="sm">
+            <Paper elevation={3} style={{paddingTop: 10, paddingBottom: 10, paddingLeft: 10, paddingRight: 10}}>
+                {messages.map((message, index) => (
+                  <div key={index} className="message">
+                    <span>{index}: </span>
+                    {message}
+                  </div>
+                ))}
+                <div ref={messagesEndRef}>&nbsp;</div>
+              
+              <div className="input-container">
+                <Box
+                  component="form"
+                  sx={{
+                    '& > :not(style)': { m: 1, width: '50ch' },
+                  }}
+                  noValidate
+                  autoComplete="off">
+                  <TextField id="standard-basic" label="Type Message" variant="standard" sx={{
+                  "& fieldset": { paddingBottom:10 ,border: 'none' },}}
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)} />
+                
+                      {/* <input
+                        type="text"
+                        id="messageInput"
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                      /> */}
+                </Box>
+              </div>
+                <div className="Buuton">
+                  <Box textAlign={'center'}>
+                  <Button variant="contained" sx={{paddingBlock:1.2 ,fontSize: 15}} endIcon={<SendIcon />} onClick={sendMessage}>Send</Button>
+                  </Box>
+                </div>
+            </Paper>
+          </Container>
+        </div>
       </div>
     </div>
   );
 }
-
+// m:4, p:1
 export default ChatInterface;
