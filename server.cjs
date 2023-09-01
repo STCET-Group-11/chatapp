@@ -39,8 +39,47 @@ app.get('/messages', async (req, res) => {
   }
 });
 
+app.get('/messages/:_id', async (req, res) => {
+  try {
+    const messageId = req.params._id; // Get the ID parameter from the URL
+    const message = await Message.findById(messageId);
+    if (message) {
+      res.json(message);
+    } else {
+      res.status(404).json({ error: 'Message not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching message by ID:', error);
+    res.status(500).json({ error: 'Error fetching message by ID' });
+  }
+});
+
+app.put('/messages/:_id', async (req, res) => {
+  try {
+    const messageId = req.params._id;
+    const { flag } = req.body; // Assuming you'll send the new flag value in the request body
+    // Find the message by ID and update the 'flag' field
+    const updatedMessage = await Message.findByIdAndUpdate(
+      messageId,
+      { content: flag },
+    );
+    console.log(updatedMessage);
+
+    if (updatedMessage) {
+      res.json(updatedMessage);
+    } else {
+      res.status(404).json({ error: 'Message not found' });
+    }
+  } catch (error) {
+    console.error('Error updating message:', error);
+    res.status(500).json({ error: 'Error updating message' });
+  }
+});
+
 app.post('/messages', async (req, res) => {
   const { content } = req.body;
+
+
 
 
   try {

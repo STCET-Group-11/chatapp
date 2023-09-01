@@ -9,21 +9,80 @@ import './App.css'
 import { Paper } from '@mui/material';
 import Container from '@mui/material/Container';
 
+
+const updatedDataFalse = {
+  flag: 'false',
+};
+
+const updatedDataTrue = {
+  flag: 'true',
+};
+
 const secretKey = 'qwerty';
+const messageId = '64f240fb921a7b9b2ba8d197'; // Replace with the actual ID
+
+// Define the URL with the query parameter
+const getUrl = `http://localhost:3001/messages/${messageId}`;
 
 function ChatInterface() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef(null);
 
+
+
   useEffect(() => {
     fetchMessages();
+    const pollInterval = setInterval(getMessageById, 500); 
+    return () => {
+      clearInterval(pollInterval);
+    };
   }, []);
+
+  const updateFlagFalse = async () => {
+    axios.put(getUrl, updatedDataFalse)
+    .then((response) => {
+      console.log('Message updated False:', response.data);
+      // Handle the updated message data as needed
+    })
+    .catch((error) => {
+      console.error('Error updating message:', error);
+      // Handle the error
+    });
+  };
+
+  const updateFlagTrue = async () => {
+    axios.put(getUrl, updatedDataTrue)
+    .then((response) => {
+      console.log('Message updated True:', response.data);
+      // Handle the updated message data as needed
+    })
+    .catch((error) => {
+      console.error('Error updating message:', error);
+      // Handle the error
+    });
+  };
+
+
+  const getMessageById = async () => {
+    axios
+    .get(getUrl)
+    .then((response) => {
+      const message = response.data;
+      if (message.content=='true') {
+        fetchMessages();
+      }
+    })
+    .catch((error) => {
+      console.error('Error retrieving message by ID:', error.message);
+    });
+  };
 
   const fetchMessages = async () => {
     try {
       const response = await axios.get('http://localhost:3001/messages');
       const fetchedMessages = response.data.map((message) => {
+        if(message._id!= messageId)
         try {
           const bytes1 = crypto.RabbitLegacy.decrypt(message.content, secretKey);
           const decryptedMessage1 = bytes1.toString(crypto.enc.Utf8);
@@ -39,6 +98,7 @@ function ChatInterface() {
           return null;
         }
       });setMessages(fetchedMessages.filter(Boolean));
+      updateFlagFalse();
        // Remove null messages
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -55,7 +115,7 @@ function ChatInterface() {
         console.log('Sending data:', { content: encryptedMessage1 }); // Add this line
         await axios.post('http://localhost:3001/messages', { content: encryptedMessage1 });
         setInputMessage('');
-        await fetchMessages();
+        updateFlagTrue();
       } catch (error) {
         console.error('Error sending message:', error);
       }
