@@ -23,17 +23,19 @@ const messageId = '64f240fb921a7b9b2ba8d197'; // Replace with the actual ID
 
 // Define the URL with the query parameter
 const getUrl = `http://localhost:3001/messages/${messageId}`;
+const Url= 'http://localhost:3001/messages';
 
 function ChatInterface() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef(null);
 
-
-
   useEffect(() => {
     fetchMessages();
-    const pollInterval = setInterval(getMessageById, 500); 
+  }, []);
+
+  useEffect(() => {
+    const pollInterval = setInterval(getMessageById, 5000); 
     return () => {
       clearInterval(pollInterval);
     };
@@ -79,8 +81,9 @@ function ChatInterface() {
   };
 
   const fetchMessages = async () => {
+    updateFlagFalse();
     try {
-      const response = await axios.get('http://localhost:3001/messages');
+      const response = await axios.get(Url);
       const fetchedMessages = response.data.map((message) => {
         if(message._id!= messageId)
         try {
@@ -88,7 +91,6 @@ function ChatInterface() {
           const decryptedMessage1 = bytes1.toString(crypto.enc.Utf8);
           const bytes = crypto.AES.decrypt(decryptedMessage1, secretKey);
           const decryptedMessage = bytes.toString(crypto.enc.Utf8);
-          console.log('Decrypted Message:', decryptedMessage);
           if (decryptedMessage) {
             return decryptedMessage;
           }
@@ -98,7 +100,6 @@ function ChatInterface() {
           return null;
         }
       });setMessages(fetchedMessages.filter(Boolean));
-      updateFlagFalse();
        // Remove null messages
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -113,7 +114,7 @@ function ChatInterface() {
       const encryptedMessage1 = crypto.RabbitLegacy.encrypt(encryptedMessage, secretKey).toString();
       try {
         console.log('Sending data:', { content: encryptedMessage1 }); // Add this line
-        await axios.post('http://localhost:3001/messages', { content: encryptedMessage1 });
+        await axios.post(Url, { content: encryptedMessage1 });
         setInputMessage('');
         updateFlagTrue();
       } catch (error) {
