@@ -38,8 +38,8 @@ function ChatInterface() {
           console.error('Error decrypting message:', error);
           return null;
         }
-      });
-      setMessages(fetchedMessages.filter(Boolean)); // Remove null messages
+      });setMessages(fetchedMessages.filter(Boolean));
+       // Remove null messages
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -55,6 +55,7 @@ function ChatInterface() {
         console.log('Sending data:', { content: encryptedMessage1 }); // Add this line
         await axios.post('http://localhost:3001/messages', { content: encryptedMessage1 });
         setInputMessage('');
+        await fetchMessages();
       } catch (error) {
         console.error('Error sending message:', error);
       }
@@ -87,13 +88,6 @@ function ChatInterface() {
                   "& fieldset": { paddingBottom:10 ,border: 'none' },}}
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)} />
-                
-                      {/* <input
-                        type="text"
-                        id="messageInput"
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                      /> */}
                 </Box>
               </div>
                 <div className="Buuton">

@@ -6,10 +6,7 @@ const crypto = require('crypto-js');
 const Message = require('./models/Message.cjs');
 const app = express();
 const PORT = process.env.PORT || 3001;
-const secretKey = 'qwerty';
-const http = require('http');
-const socketIo = require('socket.io');
-const server = http.createServer(app);
+
 
 app.use(express.json());
 app.use(cors());
@@ -45,10 +42,6 @@ app.get('/messages', async (req, res) => {
 app.post('/messages', async (req, res) => {
   const { content } = req.body;
 
-  // console.log('Content before encryption:', content);
-  // const decryptedContent = crypto.AES.decrypt(content, secretKey).toString(crypto.enc.Utf8);
-  // console.log('Decrypted Content:', decryptedContent);
-  // const encryptedContent = crypto.AES.encrypt(content, secretKey);
 
   try {
     const newMessage = await Message.create({ content: content });
