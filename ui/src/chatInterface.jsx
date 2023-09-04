@@ -10,6 +10,7 @@ import { Paper } from '@mui/material';
 import Container from '@mui/material/Container';
 
 
+
 const updatedDataFalse = {
   flag: 'false',
 };
@@ -128,15 +129,14 @@ function ChatInterface() {
       <div className="chat-interface">
         <div className="message-container">
           <Container maxWidth="sm">
-            <Paper elevation={3} style={{paddingTop: 10, paddingBottom: 10, paddingLeft: 10, paddingRight: 10}}>
-                {messages.map((message, index) => (
-                  <div key={index} className="message">
-                    <span>{index}: </span>
-                    {message}
-                  </div>
-                ))}
-                <div ref={messagesEndRef}>&nbsp;</div>
-              
+            <Paper elevation={3} style={{ paddingTop: 10, paddingBottom: 10, paddingLeft: 10, paddingRight: 10, maxHeight: '300px', overflowY: 'auto' }}>
+              {messages.map((message, index) => (
+                <div key={index} className="message">
+                  <span>{index}: </span>
+                  {message}
+                </div>
+              ))}
+              <div ref={messagesEndRef}>&nbsp;</div>
               <div className="input-container">
                 <Box
                   component="form"
@@ -144,18 +144,27 @@ function ChatInterface() {
                     '& > :not(style)': { m: 1, width: '50ch' },
                   }}
                   noValidate
-                  autoComplete="off">
-                  <TextField id="standard-basic" label="Type Message" variant="standard" sx={{
-                  "& fieldset": { paddingBottom:10 ,border: 'none' },}}
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)} />
+                  autoComplete="off"
+                >
+                  <TextField
+                    id="standard-basic"
+                    label="Type Message"
+                    variant="standard"
+                    sx={{
+                      "& fieldset": { paddingBottom: 10, border: 'none' },
+                    }}
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                  />
                 </Box>
               </div>
-                <div className="Buuton">
-                  <Box textAlign={'center'}>
-                  <Button variant="contained" sx={{paddingBlock:1.2 ,fontSize: 15}} endIcon={<SendIcon />} onClick={sendMessage}>Send</Button>
-                  </Box>
-                </div>
+              <div className="Buuton">
+                <Box textAlign={'center'}>
+                  <Button variant="contained" sx={{ paddingBlock: 1.2, fontSize: 15 }} endIcon={<SendIcon />} onClick={sendMessage}>
+                    Send
+                  </Button>
+                </Box>
+              </div>
             </Paper>
           </Container>
         </div>
