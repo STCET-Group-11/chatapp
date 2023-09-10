@@ -7,7 +7,6 @@ const Message = require('./models/Message.cjs');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
@@ -78,8 +77,6 @@ app.put('/messages/:_id', async (req, res) => {
 
 app.post('/messages', async (req, res) => {
   const { content } = req.body;
-
-
 
 
   try {

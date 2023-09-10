@@ -90,8 +90,16 @@ function ChatInterface() {
         try {
           const bytes1 = crypto.RabbitLegacy.decrypt(message.content, secretKey);
           const decryptedMessage1 = bytes1.toString(crypto.enc.Utf8);
-          const bytes = crypto.AES.decrypt(decryptedMessage1, secretKey);
+
+          const decryptionStartTime = new Date();
+
+          const bytes = crypto.TripleDES.decrypt(decryptedMessage1, secretKey);
           const decryptedMessage = bytes.toString(crypto.enc.Utf8);
+
+          const decryptionEndTime = new Date(); 
+          console.log('Decryption time (ms):', decryptionEndTime - decryptionStartTime); // Log decryption time
+          // const bytes = crypto.AES.decrypt(decryptedMessage1, secretKey);
+          //const decryptedMessage = bytes.toString(crypto.enc.Utf8);
           if (decryptedMessage) {
             return decryptedMessage;
           }
@@ -111,10 +119,14 @@ function ChatInterface() {
   const sendMessage = async () => {
     if (inputMessage.trim() !== '') {
       console.log('Input message:', inputMessage); // Add this line
-      const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
+      // const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
+      const encryptionStartTime = new Date(); // Measure encryption start time
+      const encryptedMessage = crypto.TripleDES.encrypt(inputMessage, secretKey).toString();
       const encryptedMessage1 = crypto.RabbitLegacy.encrypt(encryptedMessage, secretKey).toString();
+      const encryptionEndTime = new Date(); // Measure encryption end time
       try {
         console.log('Sending data:', { content: encryptedMessage1 }); // Add this line
+        console.log('Encryption time (ms):', encryptionEndTime - encryptionStartTime); // Log encryption time
         await axios.post(Url, { content: encryptedMessage1 });
         setInputMessage('');
         updateFlagTrue();
