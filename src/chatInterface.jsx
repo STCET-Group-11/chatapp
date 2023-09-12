@@ -21,9 +21,9 @@ function ChatInterface() {
   
       for (const message of response.data) {
         try {
-          const bytes1 = crypto.RabbitLegacy.decrypt(message.content, secretKey);
-          const decryptedMessage1 = bytes1.toString(crypto.enc.Utf8);
-          const bytes = crypto.AES.decrypt(decryptedMessage1, secretKey);
+         // const bytes1 = crypto.RabbitLegacy.decrypt(message.content, secretKey);
+          //const decryptedMessage1 = bytes1.toString(crypto.enc.Utf8);
+          const bytes = crypto.AES.decrypt(decryptedMessage, secretKey);
           const decryptedMessage = bytes.toString(crypto.enc.Utf8);
           if (decryptedMessage) {
             return decryptedMessage;
@@ -66,15 +66,16 @@ function ChatInterface() {
   const sendMessage = async () => {
     if (inputMessage.trim() !== '') {
       console.log('Input message:', inputMessage); // Add this line
-      // const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
+       
       const encryptionStartTime = new Date(); // Measure encryption start time
-      const encryptedMessage = crypto.TripleDES.encrypt(inputMessage, secretKey).toString();
-      const encryptedMessage1 = crypto.RabbitLegacy.encrypt(encryptedMessage, secretKey).toString();
+      //const encryptedMessage = crypto.TripleDES.encrypt(inputMessage, secretKey).toString();
+     // const encryptedMessage1 = crypto.RabbitLegacy.encrypt(encryptedMessage, secretKey).toString();
+     const encryptedMessage = crypto.AES.encrypt(inputMessage, secretKey).toString();
       const encryptionEndTime = new Date(); // Measure encryption end time
       try {
-        console.log('Sending data:', { content: encryptedMessage1 }); // Add this line
+        console.log('Sending data:', { content: encryptedMessage }); // Add this line
         console.log('Encryption time (ms):', encryptionEndTime - encryptionStartTime); // Log encryption time
-        await axios.post(Url, { content: encryptedMessage1 });
+        await axios.post(Url, { content: encryptedMessage });
         setInputMessage('');
         updateFlagTrue();
       } catch (error) {
